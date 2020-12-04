@@ -1,0 +1,68 @@
+{
+  "operations": [
+    {
+      "name": "SHOW_P",
+      "feature_retrieve": {
+        "counters": [
+          {
+            "counterName": "showPNUM"
+          }
+        ]
+      }
+    },
+    {
+      "name": "INCR_P",
+      "feature_retrieve": {
+        "counters": [
+          {
+            "counterName": "showPNUM"
+          }
+        ]
+      },
+      "save_counter": {
+        "counters": [
+          {
+            "counterName": "incrP"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DECR_P",
+      "feature_retrieve": {
+        "counters": [
+          {
+            "counterName": "showPNUM"
+          }
+        ]
+      },
+      "save_counter": {
+        "counters": [
+          {
+            "counterName": "decrP"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SHOW_In_FREQ",
+      "feature_retrieve": {
+        "counters": [
+          {
+            "counterName": "showPInFreq"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SHOW_Out_FREQ",
+      "feature_retrieve": {
+        "counters": [
+          {
+            "counterName": "showPOutFreq"
+          }
+        ]
+      }
+    }
+  ]
+}

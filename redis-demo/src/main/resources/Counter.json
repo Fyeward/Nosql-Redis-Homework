@@ -1,0 +1,38 @@
+{
+  "counters": [
+    {
+      "counterName": "incrP",
+      "counterIndex": "1",
+      "type": "num",
+      "keyFields": ["proletarian","pInList"],
+      "valueFields": "3"
+    },
+    {
+      "counterName": "decrP",
+      "counterIndex": "2",
+      "type": "num",
+      "keyFields": ["proletarian","pOutList"],
+      "valueFields": "-2"
+    },
+    {
+      "counterName": "showPNUM",
+      "counterIndex": "3",
+      "type": "num",
+      "keyFields": ["proletarian"]
+    },
+    {
+      "counterName": "showPInFreq",
+      "counterIndex": "4",
+      "type": "num",
+      "keyFields": ["pInList"],
+      "FREQFields":"202011301200 202012032300"
+    },
+    {
+      "counterName": "showPOutFreq",
+      "counterIndex": "5",
+      "type": "num",
+      "keyFields": ["pOutList"],
+      "FREQFields":"202012031200 202012032300"
+    }
+  ]
+}
