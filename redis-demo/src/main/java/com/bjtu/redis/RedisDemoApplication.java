@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -17,46 +18,57 @@ import java.util.*;
 
 @SpringBootApplication
 public class RedisDemoApplication {
-
+    public static String key;
+    public static String list;
+    public static String keyField;
     public static HashMap<String, Counter> counters;
-    public static HashMap<String, Operation> operation;
-    public static List<String> operationNames;
 
     public static void main(String[] args) {
         counters = new HashMap<>();
-        operation = new HashMap<>();
-        operationNames = new ArrayList<>();
         readCounterConfig();
-        readActionConfig();
         FileMonitor monitorCounters = new FileMonitor();
         monitorCounters.initFileMonitor("Counter.json");
 
         while (true) {
             System.out.println("Please enter the number of operation you choose:");
-            System.out.println("1 Operations");
-            System.out.println("0 exit");
-            Scanner opt = new Scanner(System.in);
-            int x = opt.nextInt();
-            int size = 0;
-            switch (x) {
+            System.out.println("0 show");
+            System.out.println("1 incr");
+            System.out.println("2 decr");
+            System.out.println("3 incr_freq");
+            System.out.println("4 decr_freq");
+            System.out.println("5 exit");
+            Scanner scanner = new Scanner(System.in);
+            int x = scanner.nextInt();
 
-                case 0:
-                    System.exit(0);
-                case 1:
-                    while (true) {
-                        System.out.println("Please enter the number of action you choose:");
-                        size = operationNames.size();
-                        for (int i = 0; i < size; ++i) {
-                            System.out.println(i + " " + operationNames.get(i));
-                        }
-                        System.out.println(size + " exit");
-                        x = opt.nextInt();
-                        if (x == size) {
-                            break;
-                        }
+                switch (x) {
 
-                        workAction(operation.get(operationNames.get(x)));
-                    }
+                    case 5:
+                        System.exit(0);
+
+                    case 0:
+                        Counter c0 = counters.get("show");
+                        show(c0);
+                        break;
+                    case 1:
+                        Counter c11 = counters.get("show");
+                        show(c11);
+                        Counter c12 = counters.get("incr");
+                        incr(c12);
+                        break;
+                    case 2:
+                        Counter c21 = counters.get("show");
+                        show(c21);
+                        Counter c22 = counters.get("decr");
+                        decr(c22);
+                        break;
+                    case 3:
+                        Counter c3 = counters.get("incrFreq");
+                        incrFreq(c3);
+                        break;
+                    case 4:
+                        Counter c4 = counters.get("decrFreq");
+                        decrFreq(c4);
+                        break;
 
             }
 
@@ -64,7 +76,6 @@ public class RedisDemoApplication {
     }
 
     public static void readCounterConfig() {
-
         String path = RedisDemoApplication.class.getClassLoader().getResource("Counter.json").getPath();
         String countersString = ReadFile.readJsonFile(path);
         JSONObject counterss = JSONObject.parseObject(countersString);
@@ -75,28 +86,75 @@ public class RedisDemoApplication {
         }
     }
 
-    public static void readActionConfig() {
-        String path = RedisDemoApplication.class.getClassLoader().getResource("Operation.json").getPath();
-        String actionsString = ReadFile.readJsonFile(path);
-        JSONObject actionss = JSONObject.parseObject(actionsString);
-        JSONArray array = actionss.getJSONArray("operations");
-        for (Object obj : array) {
-            Operation a = new Operation((JSONObject) obj);
-            operation.put(a.getName(), a);
-            operationNames.add(a.getName());
+/********************************************************************************/
+
+    private static void show(Counter c) {
+        key = c.getKey().get(0);
+
+        RedisUtil redisUtil = new RedisUtil();
+        try {
+            System.out.println("The value of " + key + " is " + redisUtil.get(key));
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
+        }
+
+    }
+
+    private static void incr(Counter incr) {
+        key = incr.getKey().get(0);
+        list = incr.getKey().get(1);
+        RedisUtil redisUtil = new RedisUtil();
+        try {
+            redisUtil.incr(key, incr.getValue());
+            System.out.println("The value of " + key + " increased by " + incr.getValue() + " and became " + redisUtil.get(key));
+            SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
+            Date date = new Date();
+            String string=time.format(date);
+            redisUtil.lpush(list,string);
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
         }
     }
 
-    public static void workAction(Operation action) {
-        ArrayList<String> retrieve = action.getRetrieve();
-        for (String s : retrieve) {
-            Counter c = counters.get(s);
-            Work.work(c);
+    private static void decr(Counter decr) {
+        key = decr.getKey().get(0);
+        list = decr.getKey().get(1);
+        RedisUtil redisUtil = new RedisUtil();
+        try {
+            redisUtil.decr(key, decr.getValue());
+            System.out.println("The value of " + key + " decreased by " + decr.getValue() + " and became " + redisUtil.get(key));
+            SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmm");
+            Date date = new Date();
+            String string=time.format(date);
+            redisUtil.lpush(list,string);
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
         }
-        ArrayList<String> save = action.getSave();
-        for (String s : save) {
-            Counter c = counters.get(s);
-            Work.work(c);
+    }
+
+    public static void incrFreq(Counter counter){
+        keyField = counter.getKey().get(0);
+        RedisUtil redisUtil=new RedisUtil();
+        try{
+            for (int i = 0; i < redisUtil.llen(keyField); i++) {
+                String t=redisUtil.lindex(keyField,i);
+                System.out.println("USER在 "+t+" 进入");
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void decrFreq(Counter counter){
+        keyField = counter.getKey().get(0);
+        RedisUtil redisUtil=new RedisUtil();
+        try{
+            for (int i = 0; i < redisUtil.llen(keyField); i++) {
+                System.out.println("USER在 "+redisUtil.lindex(keyField,i)+" 退出");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

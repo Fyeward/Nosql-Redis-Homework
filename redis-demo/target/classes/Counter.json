@@ -1,37 +1,37 @@
 {
   "counters": [
     {
-      "counterName": "incrP",
+      "counterName": "incr",
       "counterIndex": "1",
       "type": "num",
-      "keyFields": ["proletarian","pInList"],
+      "keyFields": ["user","userIncr"],
       "valueFields": "3"
     },
     {
-      "counterName": "decrP",
+      "counterName": "decr",
       "counterIndex": "2",
       "type": "num",
-      "keyFields": ["proletarian","pOutList"],
-      "valueFields": "-2"
+      "keyFields": ["user","userDecr"],
+      "valueFields": "-3"
     },
     {
-      "counterName": "showPNUM",
+      "counterName": "show",
       "counterIndex": "3",
       "type": "num",
-      "keyFields": ["proletarian"]
+      "keyFields": ["user"]
     },
     {
-      "counterName": "showPInFreq",
+      "counterName": "incrFreq",
       "counterIndex": "4",
       "type": "num",
-      "keyFields": ["pInList"],
+      "keyFields": ["userInList"],
       "FREQFields":"202011301200 202012032300"
     },
     {
-      "counterName": "showPOutFreq",
+      "counterName": "decrFreq",
       "counterIndex": "5",
       "type": "num",
-      "keyFields": ["pOutList"],
+      "keyFields": ["userOutList"],
       "FREQFields":"202012031200 202012032300"
     }
   ]
